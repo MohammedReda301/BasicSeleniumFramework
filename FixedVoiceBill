@@ -1,0 +1,241 @@
+package WE_Website_Test;
+
+import java.time.Duration;
+import java.util.List;
+import java.util.Set;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+public class FixedVoiceBill {
+
+  public static void main(String[] args) throws InterruptedException {
+    WebDriver driver = new ChromeDriver();
+    driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(4));
+
+    // Open the targeted URL
+    driver.get("https://www.te.eg/wps/portal/te/Personal");
+    driver.manage().window().maximize();
+
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(4));
+
+    // Find the link to bill payment section
+    WebElement billPaymentLink = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//a[normalize-space()='Pay my Fixed Voice bill']")));
+
+    // Click on the bill payment link
+    billPaymentLink.click();
+
+    // Switch to the new window if it opens (assuming it opens for bill payment)
+    String currentWindowHandle = driver.getWindowHandle();
+    Set<String> allWindowHandles = driver.getWindowHandles();
+
+    for (String handle : allWindowHandles) {
+      if (!handle.equals(currentWindowHandle)) {
+        driver.switchTo().window(handle);
+        break;
+      }
+      // Optional: Add a small timeout to wait for the new window (optional)
+       Thread.sleep(3000); // Wait for 3 second
+    }
+
+    // Verify URL (optional)
+    String currentUrl = driver.getCurrentUrl();
+    if (currentUrl.equals("https://my.te.eg/echannel/#/anonymoustopup")) {
+      System.out.println("Yes, now we are in: https://my.te.eg/echannel/#/anonymoustopup");
+    } else {
+      System.out.println("No, the current URL is: " + currentUrl);
+    }
+
+    // Find Recharges / Pay Bill button
+    WebElement rechargeButton = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//p[normalize-space()='Recharge / Pay Bill']")));
+
+    // Click on the Recharges / Pay Bill button
+    rechargeButton.click();
+
+  
+
+    // Choose WE Home Internet
+    WebElement weHomeButton = driver.findElement(By.xpath("//input[@value='1']")); // Replace with actual XPath if needed
+    weHomeButton.click();
+
+    // Hit continue
+    WebElement contButton = driver.findElement(By.xpath("//div[normalize-space()='Continue']")); // Replace with actual XPath if needed
+    contButton.click();
+
+ // Switch to the new window if it opens (assuming it opens for the action)
+    String currentWindowHandle1 = driver.getWindowHandle();
+    Set<String> allWindowHandles1 = driver.getWindowHandles();
+
+    for (String handle : allWindowHandles1) {
+      if (!handle.equals(currentWindowHandle1)) {
+        driver.switchTo().window(handle);
+        break;
+      }
+    }
+
+    // Get the URL of the new window
+    String currentUrl1 = driver.getCurrentUrl();
+
+    // Print the URL
+    System.out.println("URL of the new window: " + currentUrl1);
+
+    // Get the title of the new window (assuming it represents the page name)
+    String pageTitle = driver.getTitle();
+
+    // Print the page title
+    System.out.println("Title of the new window: " + pageTitle);
+
+ // Find the "Governorate" dropdown element
+    WebElement governorateDropdown = driver.findElement(By.xpath("//input[@id='verify_lineNumber_input_01']")); 
+    governorateDropdown.click();
+    // Locate the specific option "Cairo" and click on it
+    WebElement cairoOption = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@title='Cairo']//div[@class='ant-select-item-option-content']")));
+    cairoOption.click();
+  //Enter Valid Landline number 
+    WebElement Landline = driver.findElement(By.xpath("//input[@id='verify_lineNumber_input_02']"));
+    Landline.sendKeys("33838495");
+    
+  //Enter Valid Email:
+    WebElement Email = driver.findElement(By.xpath("//input[@id='verify_emailAddress_input_03']"));
+    Email.sendKeys("mohamed.r.abdalaziz@te.eg");
+ // Wait for the reCaptcha to load & Captcha dosn't appear until scroll down
+
+    // Scroll down 
+    // Scroll down 500 pixels
+    JavascriptExecutor js = (JavascriptExecutor) driver;
+    js.executeScript("window.scrollBy(0, 500)");
+    Thread.sleep(1000);
+    // Scroll back up 300 pixels (adjust as needed)
+    js.executeScript("window.scrollBy(0, -300)");
+    Thread.sleep(2000);
+    // Scroll down again 700 pixels (adjust as needed)
+    js.executeScript("window.scrollBy(0, 700)");
+   
+    Thread.sleep(14000); // Wait for 14 seconds
+
+    // Switch to the reCaptcha iframe
+    driver.switchTo().frame(0); // Assuming reCaptcha is in the first iframe, you may need to adjust this index
+
+    // Locate and click the checkbox indicating "I'm human"
+    WebElement recaptchaCheckbox = driver.findElement(By.xpath("//div[@class='recaptcha-checkbox-border']"));
+    recaptchaCheckbox.click();
+
+    // Switch back to the default content
+    driver.switchTo().defaultContent();
+   
+   // Wait for the reCaptcha to be solved  
+    Thread.sleep(14000);
+    // click on verify number 
+    WebElement Verify_button = driver.findElement(By.xpath("//div[normalize-space()='Verify Number']"));
+    Verify_button.click();
+    
+    // switch to new window (Pay Bill/ Recharge Balance / Renew Subscription)
+    String newWindowHandle = null;
+    for (String handle : driver.getWindowHandles()) {
+        if (!handle.equals(currentWindowHandle)) {
+            newWindowHandle = handle;
+            break;
+        }
+    }
+    // check mark "I Agree to the Terms & Conditions"
+    Thread.sleep(7000);
+    WebElement CheckBox = driver.findElement(By.xpath("//input[@type='checkbox']"));
+    CheckBox.click();
+    // check Bankcard option 
+    WebElement BankCard = driver.findElement(By.xpath("//input[@value='2']"));
+    BankCard.click();
+    // Adding the amount :
+    WebElement Amount = driver.findElement(By.xpath("//input[@id='topup_feeAmount_input_01']"));
+    Amount.sendKeys("250");
+    
+   //Hit proceed to payment:
+    WebElement Proceed = driver.findElement(By.xpath("//div[normalize-space()='Proceed to payment']"));
+    Proceed.click();
+    // Wait for the payment confirmation popup to appear and click on the "Yes" button
+    WebElement yesButton = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//button[@class='ant-btn ant-btn-primary modal-ok-btn']")));
+    yesButton.click();
+    //////
+    String currentWindowHandle11 = driver.getWindowHandle();
+    Set<String> allWindowHandles11 = driver.getWindowHandles();
+
+    for (String handle : allWindowHandles11) {
+      if (!handle.equals(currentWindowHandle11)) {
+        driver.switchTo().window(handle);
+        break;
+      }
+    }
+    Thread.sleep(4000);
+    driver.getCurrentUrl();
+    System.out.println("1" + driver.getCurrentUrl());
+    
+    // found a frame related with NBE 
+ // Find all iframe elements
+    List<WebElement> iframes = driver.findElements(By.tagName("iframe"));
+
+    // Get the count of iframes
+    int numberOfFrames = iframes.size();
+
+    // Print the count of iframes
+    System.out.println("Number of iframes on the page: " + numberOfFrames);
+ // Iterate through each iframe and print its attributes
+    for (int i = 0; i < iframes.size(); i++) {
+        WebElement iframe = iframes.get(i);
+        System.out.println("IFrame " + i);
+        System.out.println("Title: " + iframe.getAttribute("title"));
+        System.out.println("Src: " + iframe.getAttribute("src"));
+        System.out.println("Class: " + iframe.getAttribute("class"));
+        System.out.println("-------------");
+    }
+    // 1st Iframe: Card Holder Name
+    WebElement iframeElement = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("iframe.gw-proxy-nameOnCard")));
+    driver.switchTo().frame(iframeElement);
+    WebElement inputField = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("nameOnCard")));
+    inputField.sendKeys("Mohamed Reda");
+    // Switch back to the default content
+    driver.switchTo().defaultContent();
+    
+    // 2nd Iframe: Card Number
+    WebElement iframeElement1 = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("iframe.gw-proxy-number")));
+    driver.switchTo().frame(iframeElement1);
+    WebElement inputField1 = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("number")));
+    inputField1.sendKeys("12345678910121");
+    driver.switchTo().defaultContent();
+ 
+    //3rd iframe: Expiry month 
+    WebElement iframeElement2 = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("iframe.gw-proxy-expiryMonth")));
+    driver.switchTo().frame(iframeElement2);
+    WebElement inputField2 = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("expiryMonth")));
+    inputField2.sendKeys("12");
+    driver.switchTo().defaultContent();
+
+    //4th iframe: Expiry Year
+    WebElement iframeElement3 = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("iframe.gw-proxy-expiryYear")));
+    driver.switchTo().frame(iframeElement3);
+    WebElement inputField3 = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("expiryYear")));
+    inputField3.sendKeys("2025");
+    driver.switchTo().defaultContent();
+
+    //5th Iframe: CVV number 
+    WebElement iframeElement4 = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("iframe.gw-proxy-securityCode")));
+    driver.switchTo().frame(iframeElement4);
+    WebElement inputField4 = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("securityCode")));
+    inputField4.sendKeys("123");
+    driver.switchTo().defaultContent();
+ 
+
+// Hit PayNow:
+
+WebElement PayNow = driver.findElement(By.cssSelector("button[id='pay'] container-element span"));
+PayNow.click();
+
+  }
+    // Close the browser (optional)
+    // driver.quit();
+  }
+
